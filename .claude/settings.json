@@ -15,6 +15,7 @@
   "enabledPlugins": {
     "git@hiroshisuda": true,
     "preferences@hiroshisuda": true,
-    "docs@hiroshisuda": true
+    "docs@hiroshisuda": true,
+    "code@hiroshisuda": true
   }
 }

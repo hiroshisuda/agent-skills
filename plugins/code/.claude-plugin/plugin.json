@@ -1,0 +1,8 @@
+{
+  "name": "code",
+  "description": "Coding conventions (modular code, strict types, Claude owns and improves the codebase), with lint and type checks after every code write: ruff and ty for Python, eslint and tsc for TypeScript.",
+  "version": "0.1.0",
+  "author": {
+    "name": "hiroshisuda"
+  }
+}

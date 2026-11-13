@@ -1,0 +1,3 @@
+# Fallback for projects without their own ty config: every rule is an error.
+[rules]
+all = "error"

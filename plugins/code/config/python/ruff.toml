@@ -1,0 +1,37 @@
+# Fallback for projects without their own ruff config: strict lint rules.
+# A project config is better; start from this one.
+line-length = 100
+
+[lint]
+select = [
+  "F",    # pyflakes
+  "E",    # pycodestyle errors
+  "W",    # pycodestyle warnings
+  "I",    # import sorting
+  "N",    # naming
+  "UP",   # pyupgrade
+  "ANN",  # type annotations on every function
+  "B",    # bugbear
+  "A",    # shadowed builtins
+  "C4",   # comprehensions
+  "SIM",  # simplifications
+  "RET",  # return statements
+  "PIE",  # misc lints
+  "PT",   # pytest style
+  "PTH",  # pathlib over os.path
+  "ERA",  # commented-out code
+  "ARG",  # unused arguments
+  "PL",   # pylint
+  "PERF", # performance
+  "FURB", # refurb
+  "TC",   # type-checking imports
+  "RUF",  # ruff-specific
+]
+ignore = [
+  "E501",    # line length is the formatter's job
+  "PLR2004", # magic values in comparisons
+]
+
+[lint.per-file-ignores]
+"**/tests/**" = ["ANN", "PLR2004"]
+"**/test_*.py" = ["ANN", "PLR2004"]
