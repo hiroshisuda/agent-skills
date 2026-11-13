@@ -80,6 +80,28 @@ Typo and broken-link fixes in an accepted ADR are fine.
 - Use lists and tables for parallel facts, and prose for reasoning.
 - Cut preambles, previews of what a section will say, and closing recaps.
 
+## Diagrams
+
+Draw diagrams in [Mermaid](https://mermaid.js.org) code blocks, so they render on GitHub and change in the same diff as the text. Don't use ASCII art or image files.
+
+Use the diagram type that matches the subject:
+
+| Subject | Mermaid type |
+|---------|--------------|
+| Control flow, components | `flowchart` |
+| Interactions over time | `sequenceDiagram` |
+| Lifecycles | `stateDiagram-v2` |
+| Data models | `erDiagram` |
+
+Add a diagram when it shows structure that prose can't show briefly, and leave it out when it would only repeat a short paragraph. A diagram goes in the same single place as the facts it shows, and other docs link to it. Use short node labels, and put explanations in the surrounding prose.
+
+```mermaid
+sequenceDiagram
+    Client->>API: POST /sessions
+    API->>Redis: store session
+    API-->>Client: 201 Created
+```
+
 A hook runs [Vale](https://vale.sh) with [vale-ai-tells](https://github.com/tbhb/vale-ai-tells) after every `.md` write and sends you its findings. Fix each finding by rewriting the passage. Add a suppression comment only for a false positive, such as a quoted term or a literal name, and scope it to that one rule and passage:
 
 ```markdown
