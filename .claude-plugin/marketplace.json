@@ -1,0 +1,23 @@
+{
+  "name": "hiroshisuda",
+  "owner": {
+    "name": "hiroshisuda"
+  },
+  "metadata": {
+    "description": "Personal preferences and skills for Claude Code."
+  },
+  "plugins": [
+    {
+      "name": "git",
+      "source": "./plugins/git",
+      "description": "Git conventions: Conventional Commits, feature branching from an up-to-date main, and safe history cleanup.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "preferences",
+      "source": "./plugins/preferences",
+      "description": "Always-on personal working preferences, loaded into every session.",
+      "version": "0.1.0"
+    }
+  ]
+}

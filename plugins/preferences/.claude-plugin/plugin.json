@@ -1,0 +1,8 @@
+{
+  "name": "preferences",
+  "description": "Always-on personal working preferences, loaded into every session.",
+  "version": "0.1.0",
+  "author": {
+    "name": "hiroshisuda"
+  }
+}

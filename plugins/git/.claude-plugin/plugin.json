@@ -1,0 +1,8 @@
+{
+  "name": "git",
+  "description": "Git conventions: Conventional Commits, feature branching from an up-to-date main, and safe history cleanup.",
+  "version": "0.1.0",
+  "author": {
+    "name": "hiroshisuda"
+  }
+}
