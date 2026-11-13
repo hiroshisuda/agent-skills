@@ -1,6 +1,6 @@
 ---
 name: writing-docs
-description: Use when starting, designing, or implementing a new feature (it needs a feature doc), when making or recording a major technical decision (it needs an ADR), or when writing or revising any project documentation in Markdown.
+description: Use when starting, designing, or building a new feature (it needs a feature doc), when making or recording a major technical decision (it needs an ADR), or when writing or revising any project documentation in Markdown.
 ---
 
 # Writing docs
