@@ -1,0 +1,38 @@
+{
+  "name": "hiroshisuda",
+  "owner": {
+    "name": "hiroshisuda"
+  },
+  "metadata": {
+    "description": "Personal preferences and skills for Claude Code."
+  },
+  "plugins": [
+    {
+      "name": "git",
+      "source": "./plugins/git",
+      "description": "Git conventions: Conventional Commits, feature branching from an up-to-date main, and safe history cleanup. Installs GitHub's gh-stack skill for stacked PRs.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "gh-stack",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/github/gh-stack.git",
+        "path": "skills/gh-stack",
+        "sha": "bd0a32504f9ae9f795875a9e6bb90ff7408fda08"
+      },
+      "description": "GitHub's official agent skill for stacked PRs with the gh stack extension (github/gh-stack), pinned to a reviewed commit.",
+      "author": {
+        "name": "GitHub"
+      },
+      "homepage": "https://github.com/github/gh-stack",
+      "license": "MIT"
+    },
+    {
+      "name": "preferences",
+      "source": "./plugins/preferences",
+      "description": "Always-on personal working preferences, loaded into every session.",
+      "version": "0.1.0"
+    }
+  ]
+}
