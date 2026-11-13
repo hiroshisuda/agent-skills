@@ -29,7 +29,8 @@ check_terraform() { # absolute file path
     note_once "tflint:$dir" "No .tflint.hcl covers $dir, so TFLint used the code plugin's strict defaults ($cfg). Suggest to the user adding a .tflint.hcl based on it, with the plugin for their cloud provider."
   fi
   # --force exits 0 when issues are found, so a nonzero exit means TFLint itself failed.
-  if ! out=$(tflint --chdir="$dir" --config="$cfg" --filter="$(basename "$file")" --fix \
+  # Run from the module rather than with --chdir: --filter paths are relative to the working directory.
+  if ! out=$(cd "$dir" && tflint --config="$cfg" --filter="$(basename "$file")" --fix \
     --format=compact --no-color --force 2>&1); then
     add_note "tflint failed on $file: $out (if it names a missing plugin, the user should run 'tflint --init' in $dir)"
     return
