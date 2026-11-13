@@ -23,6 +23,14 @@ Make these changes in the same task, and list them in your summary so the user c
 - Prefer composition and small functions over deep inheritance and long parameter lists.
 - Export only what other modules need, and don't import another module's internals.
 
+## Configuration
+
+- Keep configurable values out of code. URLs, hosts, ports, file paths, timeouts, retry counts, limits, feature flags, and anything that differs between environments belong in environment variables or config files.
+- Load and validate configuration once at startup into a typed object, and pass it to the code that needs it. Fail fast on missing or invalid values, and don't read environment variables deep inside the code.
+- Never put secrets in code or in committed config files.
+- Follow the project's existing config mechanism. Each value moved into config also goes in the project's example config, such as `.env.example`, with a safe default.
+- Fixed facts of the domain or algorithm, such as unit conversions, can stay in code as named constants.
+
 ## Strict types
 
 The hook enforces annotations and bans `any`. Beyond that:
