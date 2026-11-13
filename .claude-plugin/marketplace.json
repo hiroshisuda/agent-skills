@@ -43,7 +43,7 @@
     {
       "name": "code",
       "source": "./plugins/code",
-      "description": "Coding conventions (modular code, strict types, Claude owns and improves the codebase), with lint and type checks after every code write: ruff and ty for Python, eslint and tsc for TypeScript.",
+      "description": "Coding conventions (modular code, strict types, Claude owns and improves the codebase). After every code write, a hook formats the file, applies automatic fixes, and reports what's left: ruff and ty for Python, Prettier, ESLint, and tsc for TypeScript, terraform fmt and TFLint for Terraform.",
       "version": "0.1.0"
     }
   ]

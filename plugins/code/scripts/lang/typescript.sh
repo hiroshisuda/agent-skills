@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# TypeScript checks: eslint lints the edited file; tsc type checks its project. Sourced by post-write.sh.
+# TypeScript checks: prettier formats and eslint fixes and lints the edited file; tsc type checks
+# its project. Sourced by post-write.sh.
 
 TS_CONFIG="$PLUGIN_ROOT/config/typescript"
 TS_FALLBACK="$DATA_DIR/typescript"
@@ -41,6 +42,16 @@ ts_tool() { # name, start dir
   command -v "$1" >/dev/null 2>&1 && { printf '%s' "$1"; return; }
   ts_fallback_ready && printf '%s' "$TS_FALLBACK/node_modules/.bin/$1"
 }
+has_prettier_config() {
+  local f
+  for f in .prettierrc .prettierrc.json .prettierrc.yaml .prettierrc.yml .prettierrc.json5 .prettierrc.toml \
+    .prettierrc.js .prettierrc.mjs .prettierrc.cjs .prettierrc.ts prettier.config.js prettier.config.mjs \
+    prettier.config.cjs prettier.config.ts; do
+    [ -f "$1/$f" ] && return 0
+  done
+  [ -f "$1/package.json" ] && grep -q '"prettier"[[:space:]]*:[[:space:]]*[{"]' "$1/package.json"
+}
+has_bin_prettier() { [ -x "$1/node_modules/.bin/prettier" ]; }
 has_bin_tsc() { [ -x "$1/node_modules/.bin/tsc" ]; }
 has_bin_eslint() { [ -x "$1/node_modules/.bin/eslint" ]; }
 
@@ -52,12 +63,22 @@ join_tsc_lines() {
 }
 
 check_typescript() { # absolute file path
-  local file="$1" dir root tsdir cfg_dir eslint tsc out status cmd
+  local file="$1" dir root tsdir cfg_dir prettier eslint tsc out status cmd
   local typed=0
 
   dir=$(dirname "$file")
   root=$(project_root "$dir")
   tsdir=$(find_up "$dir" has_tsconfig) && typed=1
+
+  if find_up "$dir" has_prettier_config >/dev/null; then
+    prettier=$(ts_tool prettier "$dir")
+  else
+    note_once "prettier:$root" "No Prettier config covers $root, so Prettier formatted $file with its defaults. Suggest to the user adding a .prettierrc so the style is explicit."
+    ts_fallback_ready && prettier="$TS_FALLBACK/node_modules/.bin/prettier"
+  fi
+  if [ -n "$prettier" ] && ! out=$($prettier --write --log-level warn "$file" 2>&1); then
+    add_note "prettier failed on $file: $out"
+  fi
 
   if cfg_dir=$(find_up "$dir" has_eslint_config); then
     eslint=$(ts_tool eslint "$dir")
@@ -67,7 +88,7 @@ check_typescript() { # absolute file path
     ts_fallback_ready && eslint="$TS_FALLBACK/node_modules/.bin/eslint --config $TS_FALLBACK/eslint.config.mjs"
   fi
   if [ -n "$eslint" ]; then
-    out=$(cd "$cfg_dir" && CODE_PLUGIN_TYPED=$typed $eslint --format "$TS_CONFIG/formatter.cjs" --no-warn-ignored "$file" 2>&1)
+    out=$(cd "$cfg_dir" && CODE_PLUGIN_TYPED=$typed $eslint --fix --format "$TS_CONFIG/formatter.cjs" --no-warn-ignored "$file" 2>&1)
     status=$?
     if [ "$status" -ge 2 ]; then
       add_note "eslint failed on $file (exit $status): $out"

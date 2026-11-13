@@ -25,20 +25,21 @@ Make these changes in the same task, and list them in your summary so the user c
 
 ## Strict types
 
-- Turn on the strictest type checking the language offers, and keep the code free of type errors.
-- Annotate every function signature and public attribute.
+The hook enforces annotations and bans `any`. Beyond that:
+
 - Model data precisely. Use literal types, discriminated unions, dataclasses, `TypedDict`, and interfaces instead of loose dicts and strings.
-- Avoid `any` (TypeScript) and `Any` (Python). Use `unknown` or `object` and narrow it.
 - Validate untrusted input at the boundary and convert it to typed values once, so inner code can trust its types.
-- Don't suppress checker errors with casts or `type: ignore` / `@ts-ignore`. For a real false positive, use a suppression scoped to that rule and line (`# ty: ignore[rule]`, `@ts-expect-error`) with a comment giving the reason.
+- Don't get around the checker with casts (`as`, `cast()`) or suppressions. For a real false positive, use a suppression scoped to that rule and line (`# ty: ignore[rule]`, `@ts-expect-error`) with a comment giving the reason.
+- In a new project, add strict lint and type-checker configs from the start.
 
 ## Checks after each write
 
-A hook lints and type checks each code file you write or edit, and sends findings back to you. Fix every finding at its cause before moving on.
+A hook runs each language's tools on every code file you write or edit. It formats the file and applies the fixes the tools can make, then sends the remaining findings back to you. Fix each one at its cause before moving on.
 
-| Language | Lint | Types |
-|----------|------|-------|
-| Python | ruff | ty |
-| TypeScript | eslint | tsc |
+| Language | Format | Lint | Types |
+|----------|--------|------|-------|
+| Python | ruff format | ruff | ty |
+| TypeScript | Prettier | ESLint | tsc |
+| Terraform | terraform fmt | TFLint | |
 
-The hook uses the project's own config and tools when it has them. Otherwise it falls back to this plugin's strict defaults, and tells you once per session so you can suggest that the user add a project config. When setting up a new project, add strict configs from the start.
+The hook uses the project's own config and tools when it has them. Otherwise it falls back to this plugin's strict defaults, and tells you once per session so you can suggest that the user add a project config.

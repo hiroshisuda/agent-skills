@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Python checks: ruff lints the edited file; ty type checks its project. Sourced by post-write.sh.
+# Python checks: ruff fixes, formats, and lints the edited file; ty type checks its project. Sourced by post-write.sh.
 
 PY_CONFIG="$PLUGIN_ROOT/config/python"
 
@@ -28,20 +28,27 @@ py_tool() { # name, project dir
 diagnostic_lines() { grep -E '^[^[:space:]].*:[0-9]+:[0-9]+: ' || true; }
 
 check_python() { # absolute file path
-  local file="$1" dir root cfg_dir ruff ty out status args
+  local file="$1" dir root cfg_dir ruff ty out status args cfg
 
   dir=$(dirname "$file")
   root=$(find_up "$dir" has_pyproject) || root=$(project_root "$dir")
 
   ruff=$(py_tool ruff "$root")
   if [ -n "$ruff" ]; then
-    args=(check --output-format concise --no-fix)
+    cfg=()
     if ! cfg_dir=$(find_up "$dir" has_ruff_config); then
-      args+=(--config "$PY_CONFIG/ruff.toml")
+      cfg=(--config "$PY_CONFIG/ruff.toml")
       note_once "ruff:$root" "No ruff config covers $root, so ruff used the code plugin's strict defaults ($PY_CONFIG/ruff.toml). Suggest to the user adding a [tool.ruff] section to pyproject.toml with strict rules, based on those defaults."
       cfg_dir="$root"
     fi
-    out=$(cd "$cfg_dir" && $ruff "${args[@]}" "$file" 2>&1)
+    # Apply safe fixes and format, then report what's left.
+    # ${cfg[@]+...} keeps bash 3.2 (macOS) from treating an empty array as unset.
+    (
+      cd "$cfg_dir" || exit
+      $ruff check ${cfg[@]+"${cfg[@]}"} --fix-only --quiet "$file"
+      $ruff format ${cfg[@]+"${cfg[@]}"} --quiet "$file"
+    ) >/dev/null 2>&1
+    out=$(cd "$cfg_dir" && $ruff check ${cfg[@]+"${cfg[@]}"} --output-format concise --no-fix "$file" 2>&1)
     status=$?
     if [ "$status" -ge 2 ]; then
       add_note "ruff failed on $file (exit $status): $out"

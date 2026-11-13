@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# PostToolUse (Write|Edit|MultiEdit): lint and type check the written file with its language's tools.
+# PostToolUse (Write|Edit|MultiEdit): fix, format, lint, and type check the written file with its
+# language's tools.
 # Findings go back to Claude through stderr with exit code 2; notes go back as context.
 # To add a language, add scripts/lang/<language>.sh with a check_<language> function and a case below.
 set -u
@@ -14,10 +15,11 @@ file=$(json_field .tool_input.file_path)
 case "$file" in
   *.py | *.pyi) lang=python ;;
   *.ts | *.tsx | *.mts | *.cts) lang=typescript ;;
+  *.tf | *.tfvars) lang=terraform ;;
   *) exit 0 ;;
 esac
 case "/$file/" in
-  */node_modules/* | */.venv/*) exit 0 ;;
+  */node_modules/* | */.venv/* | */.terraform/*) exit 0 ;;
 esac
 
 file=$(abs_path "$file")
