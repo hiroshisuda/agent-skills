@@ -3,5 +3,17 @@
     "commit": "",
     "pr": "",
     "sessionUrl": false
+  },
+  "extraKnownMarketplaces": {
+    "hiroshisuda": {
+      "source": {
+        "source": "github",
+        "repo": "hiroshisuda/agent-skills"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "git@hiroshisuda": true,
+    "preferences@hiroshisuda": true
   }
 }
