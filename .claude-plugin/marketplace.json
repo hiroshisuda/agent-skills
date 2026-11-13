@@ -11,7 +11,7 @@
       "name": "git",
       "source": "./plugins/git",
       "description": "Git conventions: Conventional Commits, feature branching from an up-to-date main, stacked PRs with gh stack, and safe history cleanup.",
-      "version": "0.3.0"
+      "version": "0.1.0"
     },
     {
       "name": "preferences",

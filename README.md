@@ -65,7 +65,7 @@ description: Use when ... (this is how Claude decides when to load the skill, so
 
 **Always-on preferences:** edit `plugins/preferences/PREFERENCES.md`. Keep it short, because all of it is loaded into every session.
 
-**After any change:** bump the plugin's `version` in both its `plugin.json` and `marketplace.json` so installed copies update, then check the result:
+**Versioning:** bump a plugin's `version` once per PR that changes it, in both its `plugin.json` and `marketplace.json`, so installed copies update. Don't bump again for later commits in the same PR, and don't bump a plugin the PR adds (it starts at `0.1.0`). Then check the result:
 
 ```sh
 claude plugin validate .
