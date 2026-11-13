@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # SessionStart: stay silent when gh and gh stack are ready; otherwise tell Claude what's missing.
 if ! command -v gh >/dev/null 2>&1; then
-  echo "Note from the git plugin: the gh CLI is not installed, so the stacked-prs skill can't run. If the user asks for PR work, tell them to install it (https://cli.github.com), run 'gh auth login', then 'gh extension install github/gh-stack'."
+  echo "Note from the git plugin: the gh CLI is not installed, so the gh-stack skill can't run. If the user asks for PR work, tell them to install it (https://cli.github.com), run 'gh auth login', then 'gh extension install github/gh-stack'."
   exit 0
 fi
 missing=()

@@ -1,8 +1,11 @@
 {
   "name": "git",
-  "description": "Git conventions: Conventional Commits, feature branching from an up-to-date main, stacked PRs with gh stack, and safe history cleanup.",
+  "description": "Git conventions: Conventional Commits, feature branching from an up-to-date main, and safe history cleanup. Installs GitHub's gh-stack skill for stacked PRs.",
   "version": "0.1.0",
   "author": {
     "name": "hiroshisuda"
-  }
+  },
+  "dependencies": [
+    "gh-stack"
+  ]
 }

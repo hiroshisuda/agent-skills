@@ -27,7 +27,8 @@ To pick up changes after pushing to this repo:
 
 | Plugin | What it provides |
 |--------|------------------|
-| [git](plugins/git/) | Skills: `commit-messages` (Conventional Commits, concise, references tickets/docs), `branching` (feature-named branches from an up-to-date `main`), `stacked-prs` (dependent PR chains with the [`gh stack`](https://github.com/github/gh-stack) extension), `history-cleanup` (fixups, squashing, reflog recovery). Needs the [GitHub CLI](https://cli.github.com), logged in with `gh auth login`, plus `gh extension install github/gh-stack`; a session-start check notes anything missing |
+| [git](plugins/git/) | Skills: `commit-messages` (Conventional Commits for commits and PR titles, concise, references tickets/docs), `branching` (feature-named branches from an up-to-date `main`), `history-cleanup` (fixups, squashing, reflog recovery). Depends on `gh-stack`, so installing it installs that too. Needs the [GitHub CLI](https://cli.github.com), logged in with `gh auth login`, plus `gh extension install github/gh-stack`; a session-start check notes anything missing |
+| [gh-stack](https://github.com/github/gh-stack/tree/main/skills/gh-stack) | GitHub's own skill for stacked PRs with the `gh stack` extension, pulled from GitHub's repo and pinned to a commit |
 | [preferences](plugins/preferences/) | A SessionStart hook that loads [`PREFERENCES.md`](plugins/preferences/PREFERENCES.md) into every session: my always-on working preferences |
 
 ## Layout
@@ -64,6 +65,8 @@ description: Use when ... (this is how Claude decides when to load the skill, so
 **A new plugin:** create `plugins/<plugin>/.claude-plugin/plugin.json` and add an entry to `.claude-plugin/marketplace.json`.
 
 **Always-on preferences:** edit `plugins/preferences/PREFERENCES.md`. Keep it short, because all of it is loaded into every session.
+
+**An external skill:** add a marketplace entry with a `git-subdir` source pointing at the skill's folder in the other repo, pinned with `sha`, and list it in `dependencies` of the plugin that needs it (see `gh-stack` in `marketplace.json`). To take upstream changes, review them, then move the `sha` in a PR.
 
 **Versioning:** bump a plugin's `version` once per PR that changes it, in both its `plugin.json` and `marketplace.json`, so installed copies update. Don't bump again for later commits in the same PR, and don't bump a plugin the PR adds (it starts at `0.1.0`). Then check the result:
 
