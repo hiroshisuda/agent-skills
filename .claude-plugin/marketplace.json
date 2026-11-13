@@ -32,12 +32,18 @@
       "name": "preferences",
       "source": "./plugins/preferences",
       "description": "Always-on personal working preferences, loaded into every session.",
-      "version": "0.2.0"
+      "version": "0.3.0"
     },
     {
       "name": "docs",
       "source": "./plugins/docs",
       "description": "Feature docs and ADRs: templates, writing guidelines, and a Vale check (vale-ai-tells) after every Markdown write.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "code",
+      "source": "./plugins/code",
+      "description": "Coding conventions (modular code, strict types, Claude owns and improves the codebase). After every code write, a hook formats the file, applies automatic fixes, and reports what's left: ruff and ty for Python, Prettier, ESLint, and tsc for TypeScript, terraform fmt and TFLint for Terraform.",
       "version": "0.1.0"
     }
   ]
