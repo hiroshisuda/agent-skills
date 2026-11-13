@@ -27,7 +27,7 @@ To pick up changes after pushing to this repo:
 
 | Plugin | What it provides |
 |--------|------------------|
-| [git](plugins/git/) | Skills: `commit-messages` (Conventional Commits, concise, references tickets/docs), `branching` (feature-named branches from an up-to-date `main`), `stacked-prs` (dependent PR chains with `gh`), `history-cleanup` (fixups, squashing, reflog recovery). Needs the [GitHub CLI](https://cli.github.com) for PR work, installed and logged in with `gh auth login`; a session-start check notes it if either is missing |
+| [git](plugins/git/) | Skills: `commit-messages` (Conventional Commits, concise, references tickets/docs), `branching` (feature-named branches from an up-to-date `main`), `stacked-prs` (dependent PR chains with the [`gh stack`](https://github.com/github/gh-stack) extension), `history-cleanup` (fixups, squashing, reflog recovery). Needs the [GitHub CLI](https://cli.github.com), logged in with `gh auth login`, plus `gh extension install github/gh-stack`; a session-start check notes anything missing |
 | [preferences](plugins/preferences/) | A SessionStart hook that loads [`PREFERENCES.md`](plugins/preferences/PREFERENCES.md) into every session: my always-on working preferences |
 
 ## Layout
