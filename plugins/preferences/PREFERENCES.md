@@ -2,11 +2,8 @@
 
 These are the user's standing preferences. Apply them in every session unless the user says otherwise.
 
-<!--
-Placeholder: replace this comment with real preferences. Keep this file short;
-all of it is loaded into context at the start of every session. Examples:
+## Decisions and open questions
 
-- Communication: be concise; lead with the answer.
-- Code style: prefer small, focused functions; no commented-out code.
-- Testing: add or update tests alongside behavior changes.
--->
+- **Interactive sessions:** at every decision point, open question, or assumption, ask the user with AskUserQuestion. Don't guess, and don't leave it as prose, a follow-up question, or an "open item" in the reply. The user decides what stays open; mark those deferred and don't raise them again.
+- **When blocked on the user:** send a PushNotification so they know their input is needed.
+- **Non-interactive sessions:** proceed on your best judgment, and report every assumption and decision made.
