@@ -33,6 +33,12 @@
       "source": "./plugins/preferences",
       "description": "Always-on personal working preferences, loaded into every session.",
       "version": "0.2.0"
+    },
+    {
+      "name": "docs",
+      "source": "./plugins/docs",
+      "description": "Feature docs and ADRs: templates, writing guidelines, and a Vale check (vale-ai-tells) after every Markdown write.",
+      "version": "0.1.0"
     }
   ]
 }

@@ -1,0 +1,8 @@
+{
+  "name": "docs",
+  "description": "Feature docs and ADRs: templates, writing guidelines, and a Vale check (vale-ai-tells) after every Markdown write.",
+  "version": "0.1.0",
+  "author": {
+    "name": "hiroshisuda"
+  }
+}
