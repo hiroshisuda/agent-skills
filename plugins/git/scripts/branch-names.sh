@@ -4,6 +4,8 @@
 
 # shellcheck source=shell-words.sh
 . "$(dirname "${BASH_SOURCE[0]}")/shell-words.sh"
+# shellcheck source=git-args.sh
+. "$(dirname "${BASH_SOURCE[0]}")/git-args.sh"
 
 # The naming convention from skills/branching/SKILL.md: lowercase kebab-case, no slashes.
 BRANCH_NAME_PATTERN='^[a-z0-9]+(-[a-z0-9]+)*$'
@@ -54,32 +56,12 @@ branches_in_gh_stack() {
   done
 }
 
-# $2 resolved against directory $1.
-join_dir() {
-  case "$2" in
-    /*) printf '%s' "$2" ;;
-    *) printf '%s/%s' "$1" "$2" ;;
-  esac
-}
-
 # Branches touched by one git invocation: $1 is the directory, the rest are git's arguments.
 branches_in_git() {
-  local dir="$1"
-  shift
-  while [ $# -gt 0 ]; do
-    case "$1" in
-      -C)
-        [ $# -gt 1 ] || return 0
-        dir=$(join_dir "$dir" "$2")
-        shift 2
-        ;;
-      -c | --git-dir | --work-tree | --namespace) shift 2 ;;
-      -*) shift ;;
-      *) break ;;
-    esac
-  done
-  [ $# -gt 0 ] || return 0
-  local sub="$1" name
+  read_git_invocation "$@"
+  [ ${#git_args[@]} -gt 0 ] || return 0
+  set -- "${git_args[@]}"
+  local dir="$git_cwd" sub="$1" name
   shift
   case "$sub" in
     switch) name=$(option_value "$@" -- -c -C --create --force-create --orphan) ;;
@@ -93,25 +75,6 @@ branches_in_git() {
   esac
   [ -n "$name" ] && printf '%s\t%s\n' "$dir" "$name"
   return 0
-}
-
-# Print the word after the first of the given options. Usage: option_value <args> -- <options>.
-option_value() {
-  local -a args=()
-  while [ $# -gt 0 ] && [ "$1" != -- ]; do
-    args+=("$1")
-    shift
-  done
-  shift
-  local i opt
-  for ((i = 0; i < ${#args[@]} - 1; i++)); do
-    for opt in "$@"; do
-      if [ "${args[i]}" = "$opt" ]; then
-        printf '%s' "${args[i + 1]}"
-        return 0
-      fi
-    done
-  done
 }
 
 # The branch that `git branch <args>` creates, renames to, or copies to, if any.
@@ -139,44 +102,4 @@ new_branch_name() {
   else
     printf '%s' "${positional[0]}"
   fi
-}
-
-# One line per branch that `git push <args>` updates on the remote.
-push_targets() {
-  local -a positional=()
-  local all=0 tags=0
-  while [ $# -gt 0 ]; do
-    case "$1" in
-      -d | --delete) return 0 ;;
-      --all | --mirror | --branches) all=1 ;;
-      --tags) tags=1 ;;
-      -o | --push-option | --repo | --receive-pack | --exec) shift ;;
-      -*) ;;
-      *) positional+=("$1") ;;
-    esac
-    shift
-  done
-  if [ "$all" = 1 ]; then
-    echo "@all"
-    return 0
-  fi
-  if [ ${#positional[@]} -le 1 ]; then
-    [ "$tags" = 1 ] || echo HEAD
-    return 0
-  fi
-  local refspec dst
-  for refspec in "${positional[@]:1}"; do
-    refspec="${refspec#+}"
-    case "$refspec" in
-      :*) continue ;; # deletes a remote branch
-      *:) continue ;;
-      *:*) dst="${refspec#*:}" ;;
-      *) dst="$refspec" ;;
-    esac
-    dst="${dst#refs/heads/}"
-    case "$dst" in
-      refs/*) continue ;; # tags, notes, and other non-branch refs
-    esac
-    echo "$dst"
-  done
 }

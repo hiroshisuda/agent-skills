@@ -15,6 +15,12 @@ A branch takes its name from the feature or change it adds:
 
 In cloud sessions, a hook enforces this. It blocks `git switch -c`, `git checkout -b`, `git branch <name>`, `gh stack init`, `gh stack add`, and `git push` when the branch they create or push breaks the convention, including the `claude/...` branch the session assigns. Rename an unpushed branch with `git branch -m <new-name>` before the first push.
 
+## Never work on main
+
+Don't commit to, rewrite, push, or edit files on `main`, `master`, or the repository's default branch. Create a feature branch before the first change, even a small one, and open a pull request from it.
+
+In every session, a hook enforces this. It blocks `git commit`, `merge` (except `--ff-only`), `rebase`, `cherry-pick`, `revert`, `am`, and `git push` when they would write to a protected branch, and blocks file edits in a repository while one is checked out. Pulling, switching branches, and editing gitignored files stay allowed, as does the first commit of a new repository. If commits already landed on local `main`, create the feature branch from them and ask the user before resetting `main`. Only the user can lift the block, by starting Claude Code with `GIT_ALLOW_MAIN=1`.
+
 ## Creating a branch
 
 Always branch from an up-to-date `main`:
