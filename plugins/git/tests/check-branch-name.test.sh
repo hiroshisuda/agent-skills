@@ -1,18 +1,12 @@
 #!/usr/bin/env bash
-# Tests for the branch-name check. Run: plugins/git/tests/check-branch-name.test.sh
+# Tests for the branch-name check. Run all tests with plugins/git/tests/run.sh.
 set -u
 here=$(cd "$(dirname "$0")" && pwd)
 scripts="$here/../scripts"
+# shellcheck source=lib.sh
+. "$here/lib.sh"
 # shellcheck source=../scripts/branch-names.sh
 . "$scripts/branch-names.sh"
-
-failures=0
-check() { # description, expected, actual
-  if [ "$2" != "$3" ]; then
-    printf 'FAIL: %s\n  expected: %q\n  actual:   %q\n' "$1" "$2" "$3"
-    failures=$((failures + 1))
-  fi
-}
 
 # Names
 for name in csv-export fix-empty-input-crash proj-218-csv-export v2-api main; do
@@ -48,6 +42,7 @@ check "push option value" "/r${t}feat" "$(branches_in_command 'git push -o ci.sk
 check "git -C" "/r/sub${t}HEAD" "$(branches_in_command 'git -C sub push' /r)"
 check "cd then push" "/abs${t}HEAD" "$(branches_in_command 'cd /abs && git push' /r)"
 check "env and quotes" "/r${t}x" "$(branches_in_command "FOO=1 git switch -c 'x'" /r)"
+check "quoted message" "/r${t}HEAD" "$(branches_in_command 'git commit -m "fix: a; b" && git push' /r)"
 check "chain" "/r${t}a"$'\n'"/r${t}HEAD" "$(branches_in_command 'git switch -c a; git commit -m wip && git push' /r)"
 check "not git" "" "$(branches_in_command 'echo git push origin bad/name' /r)"
 
@@ -71,8 +66,4 @@ check "hook ignores local sessions" 0 "$(run_hook '' 'git push -u origin claude/
 git -C "$repo" branch -q -m csv-export
 check "hook allows renamed branch push" 0 "$(run_hook true 'git push -u origin')"
 
-if [ "$failures" -gt 0 ]; then
-  echo "$failures failed"
-  exit 1
-fi
-echo "all passed"
+finish

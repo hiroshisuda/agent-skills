@@ -2,6 +2,9 @@
 # Pure helpers for the branch-name check. Source this file; don't run it.
 # Nothing here touches git or the filesystem, so the tests can call every function directly.
 
+# shellcheck source=shell-words.sh
+. "$(dirname "${BASH_SOURCE[0]}")/shell-words.sh"
+
 # The naming convention from skills/branching/SKILL.md: lowercase kebab-case, no slashes.
 BRANCH_NAME_PATTERN='^[a-z0-9]+(-[a-z0-9]+)*$'
 # A year from 1900-2099 followed by a month, with an optional day: 2026-11, 202611, 2026-11-14.
@@ -16,30 +19,21 @@ branch_name_problem() {
   fi
 }
 
-# Split shell command $1 into simple commands, one per line.
-# Quotes are dropped rather than parsed: branch names never need them.
-split_commands() {
-  printf '%s\n' "$1" | tr -d "\"'" | sed -E 's/(&&|\|\||[;|&()])/\n/g'
-}
-
 # Print "<dir><TAB><branch>" for each branch that shell command $1, run in directory $2, would
 # create or push. <branch> is a name, "HEAD" for the branch checked out in <dir>, or "@all" for
 # every local branch.
 branches_in_command() {
-  local dir="$2" line
-  local -a words
-  while IFS= read -r line; do
-    read -ra words <<<"$line"
-    # Skip leading VAR=value assignments.
-    while [ ${#words[@]} -gt 0 ] && [[ ${words[0]} =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; do
-      words=("${words[@]:1}")
-    done
-    [ ${#words[@]} -gt 0 ] || continue
-    case "${words[0]}" in
-      cd) [ ${#words[@]} -gt 1 ] && dir=$(join_dir "$dir" "${words[1]}") ;;
-      git) branches_in_git "$dir" "${words[@]:1}" ;;
-    esac
-  done < <(split_commands "$1")
+  local dir="$2"
+  for_each_command branches_in_simple_command "$1"
+}
+
+# Callback for for_each_command. Updates branches_in_command's dir on cd.
+branches_in_simple_command() {
+  case "$1" in
+    cd) [ $# -gt 1 ] && dir=$(join_dir "$dir" "$2") ;;
+    git) branches_in_git "$dir" "${@:2}" ;;
+  esac
+  return 0
 }
 
 # $2 resolved against directory $1.
