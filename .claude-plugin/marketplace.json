@@ -10,8 +10,8 @@
     {
       "name": "git",
       "source": "./plugins/git",
-      "description": "Git conventions: Conventional Commits, feature branching from an up-to-date main, and safe history cleanup. Installs GitHub's gh-stack skill for stacked PRs.",
-      "version": "0.1.0"
+      "description": "Git conventions: Conventional Commits, feature branching from an up-to-date main, and safe history cleanup. Blocks non-Conventional PR titles, and badly named branches in cloud sessions. Installs GitHub's gh-stack skill for stacked PRs.",
+      "version": "0.2.0"
     },
     {
       "name": "gh-stack",
