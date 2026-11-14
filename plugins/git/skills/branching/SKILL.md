@@ -13,7 +13,7 @@ A branch takes its name from the feature or change it adds:
 - if there is a ticket, it may be prefixed: `proj-218-csv-export`
 - no personal names or dates
 
-In cloud sessions, a hook enforces this. It blocks `git switch -c`, `git checkout -b`, `git branch <name>`, and `git push` when the branch they create or push breaks the convention, including the `claude/...` branch the session assigns. Rename an unpushed branch with `git branch -m <new-name>` before the first push.
+In cloud sessions, a hook enforces this. It blocks `git switch -c`, `git checkout -b`, `git branch <name>`, `gh stack init`, `gh stack add`, and `git push` when the branch they create or push breaks the convention, including the `claude/...` branch the session assigns. Rename an unpushed branch with `git branch -m <new-name>` before the first push.
 
 ## Creating a branch
 

@@ -80,4 +80,42 @@ check "hook allows MCP merge commit title" 0 \
 check "hook allows MCP squash without title" 0 \
   "$(run_hook '{"tool_name":"mcp__github__merge_pull_request","tool_input":{"merge_method":"squash"}}')"
 
+# gh stack submit --auto
+check "detects auto submit" 0 "$(is_stack_auto_submit 'gh stack submit --auto --open'; echo $?)"
+check "detects chained auto submit" 0 "$(is_stack_auto_submit 'git push && gh stack submit --auto'; echo $?)"
+check "ignores submit without --auto" 1 "$(is_stack_auto_submit 'gh stack submit'; echo $?)"
+check "ignores other commands" 1 "$(is_stack_auto_submit 'gh stack view --json'; echo $?)"
+
+# The post-submit hook end to end, with a stub gh standing in for GitHub
+stub=$(mktemp -d)
+trap 'rm -rf "$stub"' EXIT
+cat >"$stub/gh" <<'STUB'
+#!/usr/bin/env bash
+case "$*" in
+  "stack view --json")
+    [ -n "${STUB_FAIL:-}" ] && exit 1
+    echo '{"branches":[{"name":"a","pr":{"number":1,"state":"OPEN"}},
+      {"name":"b","pr":{"number":2,"state":"OPEN"}},{"name":"c","pr":{"number":3,"state":"MERGED"}},
+      {"name":"d"}]}' ;;
+  "pr view 1 --json title -q .title") echo "feat(auth): add middleware" ;;
+  "pr view 2 --json title -q .title") echo "${STUB_TITLE2:-Add API routes}" ;;
+  *) exit 1 ;;
+esac
+STUB
+chmod +x "$stub/gh"
+run_post_hook() { # command, extra env assignments...
+  local cmd="$1"
+  shift
+  jq -n --arg c "$cmd" '{tool_name: "Bash", tool_input: {command: $c}}' |
+    env PATH="$stub:$PATH" "$@" "$scripts/check-stack-titles.sh" 2>&1
+  echo "exit $?"
+}
+out=$(run_post_hook 'gh stack submit --auto')
+check "post hook flags generated title" 1 "$([[ $out == *"PR #2 'Add API routes'"* && $out == *"exit 2" ]] && echo 1)"
+check "post hook skips good and merged PRs" "" "$(printf '%s' "$out" | grep -E "PR #(1|3)")"
+check "post hook passes good titles" "exit 0" "$(run_post_hook 'gh stack submit --auto' STUB_TITLE2='feat(api): add routes')"
+out=$(run_post_hook 'gh stack submit --auto' STUB_FAIL=1)
+check "post hook asks Claude when gh fails" 1 "$([[ $out == *"couldn't read them"* && $out == *"exit 2" ]] && echo 1)"
+check "post hook ignores other commands" "exit 0" "$(run_post_hook 'gh stack view --json')"
+
 finish

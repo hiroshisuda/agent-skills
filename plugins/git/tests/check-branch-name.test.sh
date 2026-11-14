@@ -44,6 +44,9 @@ check "cd then push" "/abs${t}HEAD" "$(branches_in_command 'cd /abs && git push'
 check "env and quotes" "/r${t}x" "$(branches_in_command "FOO=1 git switch -c 'x'" /r)"
 check "quoted message" "/r${t}HEAD" "$(branches_in_command 'git commit -m "fix: a; b" && git push' /r)"
 check "chain" "/r${t}a"$'\n'"/r${t}HEAD" "$(branches_in_command 'git switch -c a; git commit -m wip && git push' /r)"
+check "gh stack init" "/r${t}a"$'\n'"/r${t}b" "$(branches_in_command 'gh stack init a b' /r)"
+check "gh stack add" "/r${t}refactor/foo" "$(branches_in_command 'gh stack add refactor/foo' /r)"
+check "gh stack submit" "" "$(branches_in_command 'gh stack submit --auto' /r)"
 check "not git" "" "$(branches_in_command 'echo git push origin bad/name' /r)"
 
 # The hook end to end
@@ -59,6 +62,7 @@ run_hook() { # remote flag, command
 check "hook blocks assigned branch push" 2 "$(run_hook true 'git push -u origin claude/amazing-lamport-wl9v25')"
 check "hook blocks current branch push" 2 "$(run_hook true 'git push -u origin HEAD')"
 check "hook blocks bad create" 2 "$(run_hook true 'git switch -c fix-2026-11-14')"
+check "hook blocks bad stack layer" 2 "$(run_hook true 'gh stack add claude/api')"
 check "hook allows good create" 0 "$(run_hook true 'git switch -c csv-export')"
 check "hook allows good push" 0 "$(run_hook true 'git push -u origin csv-export')"
 check "hook allows non-git" 0 "$(run_hook true 'ls -la')"

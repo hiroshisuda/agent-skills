@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# PreToolUse (Bash), cloud sessions only: block git commands that create or push a branch whose
-# name breaks the branching skill's convention. Claude gets the reason through stderr (exit 2).
+# PreToolUse (Bash), cloud sessions only: block git and gh stack commands that create or push a
+# branch whose name breaks the branching skill's convention. Claude gets the reason through
+# stderr (exit 2).
 set -u
 
 [ "${CLAUDE_CODE_REMOTE:-}" = true ] || exit 0
@@ -13,7 +14,7 @@ input=$(cat)
 command=$(printf '%s' "$input" | jq -r '.tool_input.command // empty')
 cwd=$(printf '%s' "$input" | jq -r '.cwd // empty')
 case "$command" in
-  *git*) ;;
+  *git* | *gh*stack*) ;;
   *) exit 0 ;;
 esac
 

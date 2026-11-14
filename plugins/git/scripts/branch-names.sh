@@ -32,8 +32,26 @@ branches_in_simple_command() {
   case "$1" in
     cd) [ $# -gt 1 ] && dir=$(join_dir "$dir" "$2") ;;
     git) branches_in_git "$dir" "${@:2}" ;;
+    gh) [ "${2:-}" = stack ] && branches_in_gh_stack "$dir" "${@:3}" ;;
   esac
   return 0
+}
+
+# Branches that gh stack init or gh stack add create: $1 is the directory, the rest are the
+# arguments after "gh stack".
+branches_in_gh_stack() {
+  local dir="$1" sub="${2:-}" arg
+  case "$sub" in
+    init | add) ;;
+    *) return 0 ;;
+  esac
+  shift 2
+  for arg in "$@"; do
+    case "$arg" in
+      -*) ;;
+      *) printf '%s\t%s\n' "$dir" "$arg" ;;
+    esac
+  done
 }
 
 # $2 resolved against directory $1.

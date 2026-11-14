@@ -51,7 +51,7 @@ If there is nothing to reference, omit the footer.
 ## Pull requests
 
 - **Titles** use the same Conventional Commits form as a commit subject; the title often becomes the commit when a PR is squash-merged. Tools that generate titles (e.g. `gh stack submit --auto`) need a follow-up `gh pr edit <number> --title "..."`.
-- A hook enforces the title rules in every session. It blocks `gh pr create` without a literal `--title`, and it blocks `gh pr create`, `gh pr edit`, and the GitHub MCP tools when they set a title that breaks the subject-line rules above. It also checks a commit title given for a squash merge, since that replaces the PR title in history.
+- A hook enforces the title rules in every session. It blocks `gh pr create` without a literal `--title`, and it blocks `gh pr create`, `gh pr edit`, and the GitHub MCP tools when they set a title that breaks the subject-line rules above. It also checks a commit title given for a squash merge, since that replaces the PR title in history. After `gh stack submit --auto`, a second hook reads the generated titles and lists the PRs to retitle.
 - **Bodies** say briefly why the change was made, and include the same `Refs:` / `Closes:` references as the commits.
 - **Merging** happens only when the user asks. If they haven't said which method to use (squash, merge or rebase), ask, then pass it explicitly rather than relying on a tool's default or last-used method.
 

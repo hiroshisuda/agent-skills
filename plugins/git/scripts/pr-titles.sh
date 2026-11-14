@@ -79,3 +79,20 @@ report_title_problem() { # what, title
   problem=$(pr_title_problem "$2")
   [ -z "$problem" ] || printf -- "- %s '%s': %s\n" "$1" "$2" "$problem"
 }
+
+# Succeed when shell command $1 runs gh stack submit --auto, which opens PRs with generated titles.
+is_stack_auto_submit() {
+  local found=0
+  for_each_command stack_auto_submit_in_simple_command "$1"
+  [ "$found" = 1 ]
+}
+
+# Callback for for_each_command. Sets is_stack_auto_submit's found.
+stack_auto_submit_in_simple_command() {
+  [ "$1" = gh ] && [ "${2:-}" = stack ] && [ "${3:-}" = submit ] || return 0
+  local arg
+  for arg in "${@:4}"; do
+    [ "$arg" = --auto ] && found=1
+  done
+  return 0
+}
