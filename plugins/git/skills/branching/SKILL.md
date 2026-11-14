@@ -1,17 +1,19 @@
 ---
 name: branching
-description: Use when creating a new git branch, starting work on a feature or fix, naming a branch, or bringing an existing branch up to date with main.
+description: Use when creating a new git branch or starting work on a feature or fix, when naming a branch, or when bringing an existing branch up to date with main.
 ---
 
 # Branching
 
 ## Naming
 
-Name the branch for the feature or change it implements:
+A branch takes its name from the feature or change it adds:
 
 - lowercase kebab-case, short and descriptive: `csv-export`, `fix-empty-input-crash`
 - if there is a ticket, it may be prefixed: `proj-218-csv-export`
 - no personal names or dates
+
+In cloud sessions, a hook enforces this. It blocks `git switch -c`, `git checkout -b`, `git branch <name>`, and `git push` when the branch they create or push breaks the convention, including the `claude/...` branch the session assigns. Rename an unpushed branch with `git branch -m <new-name>` before the first push.
 
 ## Creating a branch
 
@@ -28,7 +30,7 @@ git switch -c <branch-name>
 - If `git pull --ff-only` fails, local `main` has diverged from the remote. Report this to the user rather than merging or resetting.
 - If the repository's default branch isn't `main` (check `git symbolic-ref refs/remotes/origin/HEAD`), use that branch instead and mention it.
 
-## Keeping a branch current
+## Updating a branch from main
 
 Branches should be short-lived. To pick up new changes from `main`, rebase:
 
